@@ -44,6 +44,4 @@ aws iam get-role --role-name GuardDutyHealthCheckRole --query 'Role.{RoleName:Ro
 aws iam list-attached-role-policies --role-name GuardDutyHealthCheckRole --output table
 
 # Test the role (from Security Account)
-aws sts assume-role \
-    --role-arn "arn:aws:iam::MEMBER-ACCOUNT-ID:role/GuardDutyHealthCheckRole" \
-    --role-session-name "TestSession"
+aws sts assume-role --role-arn "arn:aws:iam::333333333333:role/GuardDutyHealthCheckRole" --role-session-name "TestSession"
