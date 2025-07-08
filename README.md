@@ -35,17 +35,19 @@ echo "GuardDutyHealthCheckRole created successfully"
 
 ```
 
-### Verify Commands
+# Verify Commands
 
-# Verify the role was created
+## Verify the role was created
 aws iam get-role --role-name GuardDutyHealthCheckRole --query 'Role.{RoleName:RoleName,CreateDate:CreateDate}' --output table
 
-# Verify attached policies
+## Verify attached policies
 aws iam list-attached-role-policies --role-name GuardDutyHealthCheckRole --output table
 
-# Test the role (from Security Account)
+## Test the role (from Security Account)
 aws sts assume-role --role-arn "arn:aws:iam::333333333333:role/GuardDutyHealthCheckRole" --role-session-name "TestSession"
 
+
+## Test Result
 ``` text
 
 {
