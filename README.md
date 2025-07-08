@@ -59,7 +59,7 @@ aws sts assume-role --role-arn "arn:aws:iam::333333333333:role/GuardDutyHealthCh
     },
     "AssumedRoleUser": {
         "AssumedRoleId": "AROAXXXXXXXXXXXXXXXXX:TestSession",
-        "Arn": "arn:aws:sts::444444444444:assumed-role/GuardDutyHealthCheckRole/TestSession"
+        "Arn": "arn:aws:sts::333333333333:assumed-role/GuardDutyHealthCheckRole/TestSession"
     }
 }
 ```
