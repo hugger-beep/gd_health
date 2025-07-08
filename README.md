@@ -63,7 +63,8 @@ aws sts assume-role --role-arn "arn:aws:iam::333333333333:role/GuardDutyHealthCh
     }
 }
 ```
-## Or Full Test  (from Security Account), copy and paste into cloudshell
+## Or Full Test  (from Security Account), copy and paste into cloudshell 
+### Note SECURITY_ACCOUNT_ID="333333333333" # Replace with actual ID
 
 ``` text
 # Replace with actual member account ID
@@ -126,6 +127,8 @@ fi
 ```
 
  ## Or Save as Script (Reusable) and run from Security Account
+ ### Note SECURITY_ACCOUNT_ID="333333333333" # Replace with actual ID
+ 
 ``` text
 # Create the test script
 cat > test-guardduty-role.sh << 'EOF'
