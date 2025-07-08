@@ -45,3 +45,19 @@ aws iam list-attached-role-policies --role-name GuardDutyHealthCheckRole --outpu
 
 # Test the role (from Security Account)
 aws sts assume-role --role-arn "arn:aws:iam::333333333333:role/GuardDutyHealthCheckRole" --role-session-name "TestSession"
+
+``` text
+
+{
+    "Credentials": {
+        "AccessKeyId": "ASIAXXXXXXXXXXXXXXXXXXX",
+        "SecretAccessKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "SessionToken": "IQoJb3JpZ2luX2VjEHcaCXVzLWVhc3QtMSJHMEUCIQD...",
+        "Expiration": "2025-07-15T11:30:00+00:00"
+    },
+    "AssumedRoleUser": {
+        "AssumedRoleId": "AROAXXXXXXXXXXXXXXXXX:TestSession",
+        "Arn": "arn:aws:sts::444444444444:assumed-role/GuardDutyHealthCheckRole/TestSession"
+    }
+}
+```
