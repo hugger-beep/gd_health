@@ -1,4 +1,4 @@
-# Run this in each MEMBER account
+# Run this in each MEMBER account cloudshell
 
 # Step 1: Set your Security Account ID
 SECURITY_ACCOUNT_ID="333333333333"  # Replace with actual ID
