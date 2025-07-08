@@ -63,7 +63,7 @@ aws sts assume-role --role-arn "arn:aws:iam::333333333333:role/GuardDutyHealthCh
     }
 }
 ```
-## Or Full Test  (from Security Account)
+## Or Full Test  (from Security Account), copy and paste into cloudshell
 
 ``` text
 # Replace with actual member account ID
