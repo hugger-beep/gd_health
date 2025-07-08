@@ -301,6 +301,5 @@ echo "   2. Grant AssumeRole permission to Security Account"
 echo "   3. Attach GuardDuty and basic read permissions"
 EOF
 ```
-
-![GuardDuty Health Check Results]
-(result.PNG)
+### GuardDuty Health Check Result
+![GuardDuty Health Check Results](result.PNG)
