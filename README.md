@@ -5,7 +5,7 @@ SECURITY_ACCOUNT_ID="333333333333"  # Replace with actual ID
 
 # Step 2: Create trust policy file manually
 
-``` json
+``` text
 cat > trust-policy.json << EOF
 {
     "Version": "2012-10-17",
