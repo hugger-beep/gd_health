@@ -65,6 +65,7 @@ aws sts assume-role --role-arn "arn:aws:iam::333333333333:role/GuardDutyHealthCh
 ```
 ## Or Full Test  (from Security Account)
 
+``` text
 # Replace with actual member account ID
 MEMBER_ACCOUNT_ID="333333333333"
 
@@ -122,7 +123,7 @@ if [ $? -eq 0 ]; then
 else
     echo "❌ Role assumption failed"
 fi
-
+```
 
 OR
 ``` text
