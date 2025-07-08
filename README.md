@@ -197,3 +197,108 @@ EOF
 chmod +x test-guardduty-role.sh
 ./test-guardduty-role.sh
 ```
+## Cloudshell on Security Account 
+
+``` text
+
+# Create health check script
+cat > guardduty-health-check.sh << 'EOF'
+#!/bin/bash
+
+echo "=== GuardDuty Health Check Report ==="
+echo "Generated: $(date)"
+echo ""
+
+DETECTOR_ID=$(aws guardduty list-detectors --query 'DetectorIds[0]' --output text)
+
+echo "=== Detector Status ==="
+aws guardduty get-detector --detector-id $DETECTOR_ID --query '{Status:Status,PublishingFrequency:FindingPublishingFrequency,UpdatedAt:UpdatedAt}' --output table
+
+echo "=== Member Account Status ==="
+aws guardduty list-members --detector-id $DETECTOR_ID --query 'Members[?RelationshipStatus!=`Enabled`].{AccountId:AccountId,Status:RelationshipStatus,InvitedAt:InvitedAt}' --output table
+
+echo "=== Data Sources Status ==="
+aws guardduty get-detector --detector-id $DETECTOR_ID --query 'DataSources.{CloudTrail:CloudTrail.Status,DNSLogs:DnsLogs.Status,FlowLogs:FlowLogs.Status,S3Logs:S3Logs.Status}' --output table
+
+echo "=== Recent Findings Count ==="
+aws guardduty list-findings --detector-id $DETECTOR_ID --finding-criteria '{
+  "Criterion": {
+    "updatedAt": {
+      "Gte": '$(date -d '24 hours ago' +%s)000'
+    }
+  }
+}' --query 'length(FindingIds)' --output text
+
+# Cross-Account Member Validation
+echo "=== Member Account Configuration Validation ==="
+echo "Note: Requires cross-account roles in member accounts"
+echo ""
+
+# Get list of enabled member accounts
+MEMBER_ACCOUNTS=$(aws guardduty list-members --detector-id $DETECTOR_ID --query 'Members[?RelationshipStatus==`Enabled`].AccountId' --output text)
+
+if [ ! -z "$MEMBER_ACCOUNTS" ]; then
+    echo "Checking member account configurations..."
+    echo ""
+    
+    for ACCOUNT_ID in $MEMBER_ACCOUNTS; do
+        echo "=== Member Account: $ACCOUNT_ID ==="
+        
+        # Try to assume cross-account role (if configured)
+        ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/GuardDutyHealthCheckRole"
+        
+        # Check if we can assume the role
+        TEMP_CREDS=$(aws sts assume-role --role-arn "$ROLE_ARN" --role-session-name "GuardDutyHealthCheck" 2>/dev/null)
+        
+        if [ $? -eq 0 ]; then
+            # Extract credentials
+            export AWS_ACCESS_KEY_ID=$(echo $TEMP_CREDS | jq -r '.Credentials.AccessKeyId')
+            export AWS_SECRET_ACCESS_KEY=$(echo $TEMP_CREDS | jq -r '.Credentials.SecretAccessKey')
+            export AWS_SESSION_TOKEN=$(echo $TEMP_CREDS | jq -r '.Credentials.SessionToken')
+            
+            # Check member account GuardDuty status
+            MEMBER_DETECTOR=$(aws guardduty list-detectors --query 'DetectorIds[0]' --output text 2>/dev/null)
+            
+            if [ "$MEMBER_DETECTOR" != "None" ] && [ ! -z "$MEMBER_DETECTOR" ]; then
+                echo "  ✅ GuardDuty Enabled: $MEMBER_DETECTOR"
+                
+                # Check underlying services
+                CLOUDTRAIL_COUNT=$(aws cloudtrail describe-trails --query 'length(trailList[?IsLogging==`true`])' --output text 2>/dev/null)
+                FLOW_LOGS_COUNT=$(aws ec2 describe-flow-logs --query 'length(FlowLogs[?FlowLogStatus==`ACTIVE`])' --output text 2>/dev/null)
+                
+                echo "  Active CloudTrail: $CLOUDTRAIL_COUNT"
+                echo "  Active Flow Logs: $FLOW_LOGS_COUNT"
+                
+                if [ "$CLOUDTRAIL_COUNT" -eq 0 ]; then
+                    echo "  ❌ WARNING: No active CloudTrail - API monitoring disabled"
+                fi
+                
+                if [ "$FLOW_LOGS_COUNT" -eq 0 ]; then
+                    echo "  ❌ WARNING: No active VPC Flow Logs - Network monitoring disabled"
+                fi
+            else
+                echo "  ❌ GuardDuty Not Enabled in member account"
+            fi
+            
+            # Clear temporary credentials
+            unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+        else
+            echo "  ⚠️  Cannot assume cross-account role - member account validation skipped"
+            echo "  💡 To enable: Create role 'GuardDutyHealthCheckRole' in member account"
+        fi
+        
+        echo ""
+    done
+else
+    echo "No enabled member accounts found"
+fi
+
+echo "=== Health Check Complete ==="
+echo ""
+echo "💡 To enable member account validation:"
+echo "   1. Create 'GuardDutyHealthCheckRole' in each member account"
+echo "   2. Grant AssumeRole permission to Security Account"
+echo "   3. Attach GuardDuty and basic read permissions"
+EOF
+```
+
