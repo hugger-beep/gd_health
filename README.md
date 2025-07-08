@@ -63,3 +63,62 @@ aws sts assume-role --role-arn "arn:aws:iam::333333333333:role/GuardDutyHealthCh
     }
 }
 ```
+## Or Full Test  (from Security Account)
+
+# Replace with actual member account ID
+MEMBER_ACCOUNT_ID="333333333333"
+
+# Test 1: Basic assume role test
+echo "=== Testing AssumeRole ==="
+aws sts assume-role \
+    --role-arn "arn:aws:iam::${MEMBER_ACCOUNT_ID}:role/GuardDutyHealthCheckRole" \
+    --role-session-name "TestSession" \
+    --query 'AssumedRoleUser.Arn' \
+    --output text
+
+# Test 2: Full functional test
+echo "=== Testing Full Functionality ==="
+TEMP_CREDS=$(aws sts assume-role \
+    --role-arn "arn:aws:iam::${MEMBER_ACCOUNT_ID}:role/GuardDutyHealthCheckRole" \
+    --role-session-name "TestSession" 2>/dev/null)
+
+if [ $? -eq 0 ]; then
+    echo "✅ Role assumption successful"
+    
+    # Extract and use credentials
+    export AWS_ACCESS_KEY_ID=$(echo $TEMP_CREDS | jq -r '.Credentials.AccessKeyId')
+    export AWS_SECRET_ACCESS_KEY=$(echo $TEMP_CREDS | jq -r '.Credentials.SecretAccessKey')
+    export AWS_SESSION_TOKEN=$(echo $TEMP_CREDS | jq -r '.Credentials.SessionToken')
+    
+    echo "Testing permissions in member account..."
+    
+    # Test GuardDuty access
+    DETECTOR_TEST=$(aws guardduty list-detectors --query 'DetectorIds[0]' --output text 2>/dev/null)
+    if [ "$DETECTOR_TEST" != "None" ] && [ ! -z "$DETECTOR_TEST" ]; then
+        echo "✅ GuardDuty access: SUCCESS - Detector: $DETECTOR_TEST"
+    else
+        echo "⚠️  GuardDuty access: No detector found"
+    fi
+    
+    # Test CloudTrail access
+    TRAIL_COUNT=$(aws cloudtrail describe-trails --query 'length(trailList)' --output text 2>/dev/null)
+    if [ $? -eq 0 ]; then
+        echo "✅ CloudTrail access: SUCCESS - Found $TRAIL_COUNT trail(s)"
+    else
+        echo "❌ CloudTrail access: FAILED"
+    fi
+    
+    # Test VPC access
+    FLOW_LOG_COUNT=$(aws ec2 describe-flow-logs --query 'length(FlowLogs)' --output text 2>/dev/null)
+    if [ $? -eq 0 ]; then
+        echo "✅ VPC access: SUCCESS - Found $FLOW_LOG_COUNT flow log(s)"
+    else
+        echo "❌ VPC access: FAILED"
+    fi
+    
+    # Clear credentials
+    unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+    echo "✅ Test completed successfully"
+else
+    echo "❌ Role assumption failed"
+fi
