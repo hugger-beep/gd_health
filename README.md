@@ -135,7 +135,7 @@ cat > test-guardduty-role.sh << 'EOF'
 #!/bin/bash
 
 # Replace with actual member account ID
-MEMBER_ACCOUNT_ID="444444444444"
+MEMBER_ACCOUNT_ID="333333333333"
 
 # Test 1: Basic assume role test
 echo "=== Testing AssumeRole ==="
