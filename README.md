@@ -302,3 +302,4 @@ echo "   3. Attach GuardDuty and basic read permissions"
 EOF
 ```
 
+![GuardDuty Health Check Results](result.PNG)
