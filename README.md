@@ -125,7 +125,7 @@ else
 fi
 ```
 
- ## Or Save as Script (Reusable)
+ ## Or Save as Script (Reusable) and run from Security Account
 ``` text
 # Create the test script
 cat > test-guardduty-role.sh << 'EOF'
