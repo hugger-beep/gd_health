@@ -125,7 +125,7 @@ else
 fi
 ```
 
-OR
+ ## Or Save as Script (Reusable)
 ``` text
 # Create the test script
 cat > test-guardduty-role.sh << 'EOF'
