@@ -34,3 +34,16 @@ aws iam attach-role-policy --role-name GuardDutyHealthCheckRole --policy-arn arn
 echo "GuardDutyHealthCheckRole created successfully"
 
 ```
+
+### Verify Commands
+
+# Verify the role was created
+aws iam get-role --role-name GuardDutyHealthCheckRole --query 'Role.{RoleName:RoleName,CreateDate:CreateDate}' --output table
+
+# Verify attached policies
+aws iam list-attached-role-policies --role-name GuardDutyHealthCheckRole --output table
+
+# Test the role (from Security Account)
+aws sts assume-role \
+    --role-arn "arn:aws:iam::MEMBER-ACCOUNT-ID:role/GuardDutyHealthCheckRole" \
+    --role-session-name "TestSession"
