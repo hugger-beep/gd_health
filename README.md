@@ -68,7 +68,7 @@ aws sts assume-role --role-arn "arn:aws:iam::333333333333:role/GuardDutyHealthCh
 
 ``` text
 # Replace with actual member account ID
-MEMBER_ACCOUNT_ID="333333333333"
+MEMBER_ACCOUNT_ID="444444444444"
 
 # Test 1: Basic assume role test
 echo "=== Testing AssumeRole ==="
