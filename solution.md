@@ -353,3 +353,6 @@ echo "Run with: ./guardduty-health-check.sh"
 - ✅ CloudTrail read access
 - ✅ VPC Flow Logs access
 - ✅ Cross-account health monitoring enabled
+
+### GuardDuty Health Check Result
+![GuardDuty Health Check Results](result.PNG)
