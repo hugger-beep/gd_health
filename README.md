@@ -13,7 +13,7 @@ cat > trust-policy.json << EOF
         {
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::333333333333:root"
+                "AWS": "arn:aws:iam::SECURITY_ACCOUNT_ID:root"
             },
             "Action": "sts:AssumeRole"
         }
@@ -37,7 +37,7 @@ echo "GuardDutyHealthCheckRole created successfully"
 
 # Verify Commands
 
-## Verify the role was created
+## Verify the role above was created
 aws iam get-role --role-name GuardDutyHealthCheckRole --query 'Role.{RoleName:RoleName,CreateDate:CreateDate}' --output table
 
 ## Verify attached policies
