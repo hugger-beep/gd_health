@@ -161,6 +161,8 @@ else
     echo "❌ Role assumption failed - check role exists in member account"
 fi
 ```
+### GuardDuty Option 2 Result
+![GuardDuty Health Check Results](option2_result.PNG)
 
 ### Option 3: Create Reusable Test Script
 ```bash
