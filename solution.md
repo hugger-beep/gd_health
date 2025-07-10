@@ -341,6 +341,14 @@ echo "Run with: ./guardduty-health-check.sh"
 
 ---
 
+### GuardDuty Health Check Result
+![GuardDuty Health Check Results](multi_account_result1.PNG)
+
+### GuardDuty Health Check Result
+![GuardDuty Health Check Results](multi_account_result2.PNG)
+
+
+
 ## 📋 Quick Reference
 
 ### Member Account Setup Checklist
@@ -364,5 +372,4 @@ echo "Run with: ./guardduty-health-check.sh"
 - ✅ VPC Flow Logs access
 - ✅ Cross-account health monitoring enabled
 
-### GuardDuty Health Check Result
-![GuardDuty Health Check Results](result.PNG)
+
