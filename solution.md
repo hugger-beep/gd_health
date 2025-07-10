@@ -100,6 +100,18 @@ aws sts assume-role \
     --output text
 ```
 
+
+``` text
+
+If it fails:
+
+Role doesn't exist in the member account
+Trust policy doesn't allow the security account to assume it
+Insufficient permissions in the calling account
+This is a safe test - it only verifies role assumption capability without actually using the temporary credentials to access GuardDuty resources.
+
+```
+
 ### Option 2: Comprehensive Permission Test
 ```bash
 # Replace with actual member account ID
